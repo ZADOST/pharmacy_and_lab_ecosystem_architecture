@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/notification_service.dart';
 
 class PatientHomePage extends StatefulWidget {
   final int patientId;
@@ -49,14 +50,22 @@ class _PatientHomePageState extends State<PatientHomePage> with SingleTickerProv
       "description": "Complete the full 7-day course. Take with food."
     }
   ];
-
-  @override
+@override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
+    
+    // Initialize the notification engine when the dashboard opens
+    NotificationService.initialize().then((_) {
+      // In a real production flow, this is where you would check the fetched
+      // API data and trigger a notification if a new 'COMPLETED' status is found.
+      // Example simulated trigger:
+      // NotificationService.showLabResultNotification(
+      //   testId: 101, 
+      //   testName: 'Complete Blood Count (CBC)'
+      // );
+    });
+  }  @override
   void dispose() {
     _tabController.dispose();
     super.dispose();

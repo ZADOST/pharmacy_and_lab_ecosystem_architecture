@@ -82,6 +82,26 @@ class ApiClient {
       return null;
     }
   }
+  /// Fetches the monthly sales percentage breakdown
+  static Future<List<Map<String, dynamic>>> getMonthlyAnalytics() async {
+    final Uri url = Uri.parse("$baseUrl/get_sales_analytics.php");
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        if (decoded['data'] != null) {
+          return List<Map<String, dynamic>>.from(decoded['data']);
+        }
+        return [];
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print("Network Error fetching analytics: $e");
+      return [];
+    }
+  }
 
   /// Submits the completed sale to the database
   static Future<bool> processSale({
