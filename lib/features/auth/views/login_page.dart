@@ -31,13 +31,13 @@ class _LoginPageState extends State<LoginPage> {
 
     // TODO: Connect to ApiClient.patientLogin() here
     // Example: final response = await ApiClient.patientLogin('+964$phone');
+    await AuthController.loginWithPhone(context, phone);
     
-    // Simulating network delay
-    await Future.delayed(const Duration(seconds: 2));
-    
-    setState(() => _isLoading = false);
-    
+    // We check if the widget is still mounted before calling setState again
+    if (mounted) {
+      setState(() => _isLoading = false);
     // Route to PatientHomePage on success
+    }
   }
 
   Future<void> _handleFacebookLogin() async {

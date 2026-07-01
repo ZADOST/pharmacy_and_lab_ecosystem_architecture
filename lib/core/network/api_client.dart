@@ -35,6 +35,37 @@ class ApiClient {
       return false;
     }
   }
+  /// Sends login credentials to the PHP backend
+  static Future<Map<String, dynamic>?> patientLogin({String? phone, String? oauthId}) async {
+    final Uri url = Uri.parse("$baseUrl/patient_login.php");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: jsonEncode({
+          if (phone != null) "phone": phone,
+          if (oauthId != null) "oauth_id": oauthId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Successful login, return the patient data (ID and Name)
+        return jsonDecode(response.body);
+      } else {
+        // Failed login (e.g., user not found)
+        print("Login failed. Status Code: ${response.statusCode}");
+        print("Response: ${response.body}");
+        return null;
+      }
+    } catch (e) {
+      print("Network Error during login: $e");
+      return null;
+    }
+  }
 
   /// Example method to fetch all drugs (Requires get_drugs.php endpoint)
   static Future<List<DrugModel>> getAllDrugs() async {
