@@ -66,6 +66,50 @@ class ApiClient {
       return null;
     }
   }
+  /// Fetches drug details using the scanned QR hash
+  static Future<DrugModel?> getDrugByQr(String qrHash) async {
+    final Uri url = Uri.parse("$baseUrl/get_drug_by_qr.php?qr_hash=$qrHash");
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        return DrugModel.fromJson(jsonDecode(response.body));
+      } else {
+        return null; // Not found or error
+      }
+    } catch (e) {
+      print("Network Error fetching drug: $e");
+      return null;
+    }
+  }
+
+  /// Submits the completed sale to the database
+  static Future<bool> processSale({
+    required int drugId,
+    int? patientId,
+    required int quantity,
+    required double totalPrice,
+  }) async {
+    final Uri url = Uri.parse("$baseUrl/process_sale.php");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "drug_id": drugId,
+          "patient_id": patientId,
+          "quantity": quantity,
+          "total_price": totalPrice,
+        }),
+      );
+
+      return response.statusCode == 201;
+    } catch (e) {
+      print("Network Error processing sale: $e");
+      return false;
+    }
+  }
 
   /// Example method to fetch all drugs (Requires get_drugs.php endpoint)
   static Future<List<DrugModel>> getAllDrugs() async {
