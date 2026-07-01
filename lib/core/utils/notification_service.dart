@@ -5,11 +5,9 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   static Future<void> initialize() async {
-    // Android initialization settings
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    // iOS initialization settings
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -22,7 +20,10 @@ class NotificationService {
       iOS: initializationSettingsIOS,
     );
 
-    await _notificationsPlugin.initialize(initializationSettings);
+    // Updated to use the named parameter expected by the newer package version
+    await _notificationsPlugin.initialize(
+      initializationSettings: initializationSettings,
+    );
   }
 
   static Future<void> showLabResultNotification({
@@ -47,11 +48,12 @@ class NotificationService {
       iOS: iOSPlatformChannelSpecifics,
     );
 
+    // Updated to strictly map the named parameters
     await _notificationsPlugin.show(
-      testId, // Using the test ID as the notification ID prevents duplicates
-      'Lab Test Completed',
-      'Your results for $testName are now ready to view.',
-      platformChannelSpecifics,
+      id: testId,
+      title: 'Lab Test Completed',
+      body: 'Your results for $testName are now ready to view.',
+      notificationDetails: platformChannelSpecifics,
     );
   }
 }

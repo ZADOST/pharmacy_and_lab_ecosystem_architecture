@@ -149,4 +149,32 @@ class ApiClient {
       return [];
     }
   }
+  /// Registers a new walk-in patient into the database
+  static Future<Map<String, dynamic>> registerPatient({
+    required String fullName,
+    required String phone,
+    String? email,
+  }) async {
+    final Uri url = Uri.parse("$baseUrl/register_patient.php");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "full_name": fullName,
+          "phone": phone,
+          "email": email,
+        }),
+      );
+
+      return {
+        "success": response.statusCode == 201,
+        "data": jsonDecode(response.body),
+      };
+    } catch (e) {
+      print("Network Error registering patient: $e");
+      return {"success": false, "data": {"message": "Network connection error"}};
+    }
+  }
 }

@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import 'add_drug_page.dart';
 import 'dispense_drug_page.dart';
 import 'analytics_page.dart';
+import 'register_patient_page.dart';
 
 // The lab dashboard is in a different feature folder, so it needs the path
 import '../../lab_admin/views/lab_dashboard_page.dart';
@@ -24,6 +25,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     const AddDrugPage(),
     const LabDashboardPage(),
     const AnalyticsPage(),
+    const RegisterPatientPage(),
   ];
 
   void _onMenuTapped(int index) {
@@ -80,6 +82,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             selected: _selectedIndex == 3,
             selectedTileColor: AppColors.backgroundLight,
             onTap: () => _onMenuTapped(3),
+          ),
+          ListTile(
+            leading: const Icon(Icons.person_add, color: AppColors.textDark),
+            title: const Text('Register Patient'),
+            selected: _selectedIndex == 4,
+            selectedTileColor: AppColors.backgroundLight,
+            onTap: () => _onMenuTapped(4),
           ),
           const Spacer(),
           const Divider(),
