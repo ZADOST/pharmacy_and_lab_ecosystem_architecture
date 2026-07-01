@@ -7,7 +7,7 @@ void main() {
 }
 
 class PharmacyLabSystem extends StatelessWidget {
-  const PharmacyLabSystem({Key? key}) : super(key: key);
+  const PharmacyLabSystem({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class PharmacyLabSystem extends StatelessWidget {
 }
 
 class RoleRouter extends StatefulWidget {
-  const RoleRouter({Key? key}) : super(key: key);
+  const RoleRouter({super.key});
 
   @override
   State<RoleRouter> createState() => _RoleRouterState();
@@ -53,7 +53,7 @@ class _RoleRouterState extends State<RoleRouter> {
 // ---------------------------------------------------------
 
 class AdminWebDashboard extends StatelessWidget {
-  const AdminWebDashboard({Key? key}) : super(key: key);
+  const AdminWebDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +89,7 @@ class AdminWebDashboard extends StatelessWidget {
 }
 
 class PatientMobileDashboard extends StatelessWidget {
-  const PatientMobileDashboard({Key? key}) : super(key: key);
+  const PatientMobileDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +129,7 @@ class PatientMobileDashboard extends StatelessWidget {
 }
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
