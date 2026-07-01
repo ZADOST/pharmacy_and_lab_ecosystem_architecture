@@ -177,4 +177,65 @@ class ApiClient {
       return {"success": false, "data": {"message": "Network connection error"}};
     }
   }
+  /// Fetches all active and historical lab tests for the admin dashboard
+  static Future<List<Map<String, dynamic>>> getAllLabTests() async {
+    final Uri url = Uri.parse("$baseUrl/get_all_lab_tests.php");
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        if (decoded['data'] != null) {
+          return List<Map<String, dynamic>>.from(decoded['data']);
+        }
+        return [];
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print("Network Error fetching lab tests: $e");
+      return [];
+    }
+  }
+
+  /// Assigns a new lab test to a specific patient
+  static Future<bool> createLabTest({required int patientId, required String testName}) async {
+    final Uri url = Uri.parse("$baseUrl/create_lab_test.php");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "patient_id": patientId,
+          "test_name": testName,
+        }),
+      );
+      return response.statusCode == 201;
+    } catch (e) {
+      print("Network Error creating lab test: $e");
+      return false;
+    }
+  }
+
+  /// Updates the status of an existing lab test (PENDING -> PROCESSING -> COMPLETED)
+  static Future<bool> updateLabStatus({required int testId, required String status, String? resultData}) async {
+    final Uri url = Uri.parse("$baseUrl/update_lab_status.php");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "test_id": testId,
+          "status": status,
+          if (resultData != null) "result_data": resultData,
+        }),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      print("Network Error updating lab status: $e");
+      return false;
+    }
+  }
 }
