@@ -238,4 +238,29 @@ class ApiClient {
       return false;
     }
   }
+  /// Sends staff credentials to the PHP backend
+  static Future<Map<String, dynamic>?> adminLogin({required String username, required String password}) async {
+    final Uri url = Uri.parse("$baseUrl/admin_login.php");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "username": username,
+          "password": password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        print("Admin Login failed: ${response.body}");
+        return null;
+      }
+    } catch (e) {
+      print("Network Error during admin login: $e");
+      return null;
+    }
+  }
 }

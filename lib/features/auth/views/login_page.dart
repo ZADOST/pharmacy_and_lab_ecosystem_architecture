@@ -173,6 +173,19 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 32),
+                
+                // Discreet Staff Access Link
+                TextButton(
+                  onPressed: () => Navigator.pushNamed(context, '/admin-login'),
+                  child: Text(
+                    'Staff Login',
+                    style: TextStyle(
+                      color: AppColors.textLight.withOpacity(0.6),
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
