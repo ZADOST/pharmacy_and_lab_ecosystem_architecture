@@ -39,6 +39,9 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
         email: _emailController.text.trim().isEmpty ? null : _emailController.text.trim(),
       );
 
+      // 1. BUG FIX: The 'mounted' check prevents crashes if the user closes the page while loading
+      if (!mounted) return;
+
       setState(() => _isLoading = false);
 
       if (result['success']) {
@@ -46,7 +49,10 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
           _newlyRegisteredId = result['data']['patient_id'];
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration successful!'), backgroundColor: AppColors.successGreen),
+          const SnackBar(
+            content: Text('Registration successful!'), 
+            backgroundColor: AppColors.successGreen,
+          ),
         );
         _formKey.currentState!.reset();
       } else {
@@ -71,10 +77,12 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
           children: [
             if (_newlyRegisteredId != null)
               Container(
-                margin: const EdgeInsets.bottom(24),
+                // 2. BUG FIX: Replaced .bottom with .only(bottom: 24)
+                margin: const EdgeInsets.only(bottom: 24.0),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.successGreen.withOpacity(0.1),
+                  // 3. BUG FIX: Replaced deprecated .withOpacity with .withValues(alpha:)
+                  color: AppColors.successGreen.withValues(alpha: 0.1),
                   border: Border.all(color: AppColors.successGreen),
                   borderRadius: BorderRadius.circular(8),
                 ),

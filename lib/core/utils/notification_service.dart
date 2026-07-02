@@ -20,9 +20,9 @@ class NotificationService {
       iOS: initializationSettingsIOS,
     );
 
-    // Updated to use the named parameter expected by the newer package version
+    // BUG FIX: The named parameter required by the package is simply 'settings'
     await _notificationsPlugin.initialize(
-      initializationSettings: initializationSettings,
+      settings: initializationSettings,
     );
   }
 
@@ -48,7 +48,6 @@ class NotificationService {
       iOS: iOSPlatformChannelSpecifics,
     );
 
-    // Updated to strictly map the named parameters
     await _notificationsPlugin.show(
       id: testId,
       title: 'Lab Test Completed',
