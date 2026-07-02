@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/utils/qr_scanner_util.dart';
+import '../../../core/utils/pdf_receipt_util.dart'; // <-- New Import
 import '../models/drug_model.dart';
 
 class DispenseDrugPage extends StatefulWidget {
@@ -24,7 +25,6 @@ class _DispenseDrugPageState extends State<DispenseDrugPage> {
   }
 
   Future<void> _startBarcodeScan() async {
-    // Navigate to the scanner and wait for the returned string (the QR hash)
     final String? scannedHash = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const QRScannerPage()),
@@ -38,7 +38,7 @@ class _DispenseDrugPageState extends State<DispenseDrugPage> {
       setState(() {
         _scannedDrug = drug;
         _isLoading = false;
-        _quantityToSell = 1; // Reset quantity on new scan
+        _quantityToSell = 1;
       });
 
       if (drug == null) {
@@ -82,10 +82,21 @@ class _DispenseDrugPageState extends State<DispenseDrugPage> {
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Sale processed successfully!'),
+          content: Text('Sale processed successfully! Generating receipt...'),
           backgroundColor: AppColors.successGreen,
         ),
       );
+
+      // Trigger the PDF Receipt Generation
+      await PdfReceiptUtil.generateAndPrintReceipt(
+        drugName: _scannedDrug!.brandName,
+        companyName: _scannedDrug!.companyName,
+        quantity: _quantityToSell,
+        pricePerUnit: _scannedDrug!.price,
+        totalPrice: total,
+        patientId: optionalPatientId,
+      );
+
       // Clear the screen for the next customer
       setState(() {
         _scannedDrug = null;
@@ -126,7 +137,6 @@ class _DispenseDrugPageState extends State<DispenseDrugPage> {
             if (_isLoading)
               const Center(child: CircularProgressIndicator())
             else if (_scannedDrug != null) ...[
-              // Display Scanned Drug Information
               Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -171,8 +181,6 @@ class _DispenseDrugPageState extends State<DispenseDrugPage> {
                 ),
               ),
               const SizedBox(height: 24),
-              
-              // Sale Inputs
               Row(
                 children: [
                   Expanded(
@@ -215,8 +223,6 @@ class _DispenseDrugPageState extends State<DispenseDrugPage> {
                 ],
               ),
               const Spacer(),
-              
-              // Checkout Button
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -237,7 +243,7 @@ class _DispenseDrugPageState extends State<DispenseDrugPage> {
                         backgroundColor: AppColors.successGreen,
                         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                       ),
-                      child: const Text('Confirm Sale', style: TextStyle(fontSize: 16)),
+                      child: const Text('Confirm Sale & Print', style: TextStyle(fontSize: 16)),
                     ),
                   ],
                 ),
