@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../controllers/auth_controller.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -29,22 +30,22 @@ class _LoginPageState extends State<LoginPage> {
 
     setState(() => _isLoading = true);
 
-    // TODO: Connect to ApiClient.patientLogin() here
-    // Example: final response = await ApiClient.patientLogin('+964$phone');
     await AuthController.loginWithPhone(context, phone);
     
-    // We check if the widget is still mounted before calling setState again
     if (mounted) {
       setState(() => _isLoading = false);
-    // Route to PatientHomePage on success
     }
   }
 
   Future<void> _handleFacebookLogin() async {
-    // TODO: Implement flutter_facebook_auth package logic here
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Facebook OAuth initializing...')),
-    );
+    setState(() => _isLoading = true);
+    
+    // Calls the Facebook OAuth logic we built in the AuthController
+    await AuthController.loginWithFacebook(context);
+    
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -117,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 24),
                 
-                // Login Button
+                // Phone Login Button
                 SizedBox(
                   height: 56,
                   child: ElevatedButton(
@@ -154,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   height: 56,
                   child: OutlinedButton.icon(
-                    onPressed: _handleFacebookLogin,
+                    onPressed: _isLoading ? null : _handleFacebookLogin,
                     icon: const Icon(Icons.facebook, color: Color(0xFF1877F2)),
                     label: const Text(
                       'Continue with Facebook',
@@ -173,6 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+                
                 const SizedBox(height: 32),
                 
                 // Discreet Staff Access Link
@@ -186,6 +188,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+                
               ],
             ),
           ),

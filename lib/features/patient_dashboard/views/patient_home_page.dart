@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/notification_service.dart';
+import 'profile_settings_page.dart';
 
 class PatientHomePage extends StatefulWidget {
   final int patientId;
@@ -16,7 +17,6 @@ class _PatientHomePageState extends State<PatientHomePage> with SingleTickerProv
   late TabController _tabController;
 
   // Mocking the data structure that would be returned from get_patient_history.php
-  // We use standard professional medical parameters for the mock data.
   final List<Map<String, dynamic>> _labResults = [
     {
       "test_name": "Complete Blood Count (CBC)",
@@ -50,22 +50,18 @@ class _PatientHomePageState extends State<PatientHomePage> with SingleTickerProv
       "description": "Complete the full 7-day course. Take with food."
     }
   ];
-@override
+
+  @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     
-    // Initialize the notification engine when the dashboard opens
     NotificationService.initialize().then((_) {
-      // In a real production flow, this is where you would check the fetched
-      // API data and trigger a notification if a new 'COMPLETED' status is found.
-      // Example simulated trigger:
-      // NotificationService.showLabResultNotification(
-      //   testId: 101, 
-      //   testName: 'Complete Blood Count (CBC)'
-      // );
+      // Notification polling logic goes here
     });
-  }  @override
+  }
+
+  @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
@@ -169,6 +165,19 @@ class _PatientHomePageState extends State<PatientHomePage> with SingleTickerProv
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
         title: const Text('My Health Dashboard'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileSettingsPage(patientId: widget.patientId),
+                ),
+              );
+            },
+          )
+        ],
         bottom: TabBar(
           controller: _tabController,
           labelColor: AppColors.primaryTeal,

@@ -263,4 +263,62 @@ class ApiClient {
       return null;
     }
   }
+  /// Sends updated patient profile data to the backend
+  static Future<Map<String, dynamic>> updatePatientProfile({
+    required int patientId,
+    required String fullName,
+    required String phone,
+    String? email,
+  }) async {
+    final Uri url = Uri.parse("$baseUrl/update_patient_profile.php");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "patient_id": patientId,
+          "full_name": fullName,
+          "phone": phone,
+          "email": email,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return {"success": true, "message": "Profile updated successfully."};
+      } else {
+        final decoded = jsonDecode(response.body);
+        return {"success": false, "message": decoded['message'] ?? "Update failed."};
+      }
+    } catch (e) {
+      print("Network Error updating profile: $e");
+      return {"success": false, "message": "Network connection error."};
+    }
+  }
+  /// Authenticates or registers a patient via Facebook OAuth
+  static Future<Map<String, dynamic>?> facebookAuth({
+    required String oauthId,
+    required String fullName,
+    String? email,
+  }) async {
+    final Uri url = Uri.parse("$baseUrl/facebook_oauth.php");
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "oauth_id": oauthId,
+          "full_name": fullName,
+          "email": email,
+        }),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return jsonDecode(response.body);
+      }
+      return null;
+    } catch (e) {
+      print("Network Error during Facebook Auth: $e");
+      return null;
+    }
+  }
 }
